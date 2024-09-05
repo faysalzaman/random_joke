@@ -13,7 +13,13 @@ class JokeBloc extends Bloc<JokeEvent, JokeState> {
           setup: response.setup.toString(),
         ));
       } catch (e) {
-        emit(JokeStateError(message: e.toString()));
+        // check internet
+        if (e.toString().contains("SocketException")) {
+          emit(JokeStateError(message: "No Internet Connection"));
+          return;
+        }
+        emit(
+            JokeStateError(message: e.toString().replaceAll("Exception:", "")));
       }
     });
   }

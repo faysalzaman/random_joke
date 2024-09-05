@@ -13,7 +13,13 @@ class CatFactBloc extends Bloc<CatFactEvent, CatFactState> {
         final String data = await CatFactController.getModel();
         emit(CatFactStateSuccess(fact: data));
       } catch (error) {
-        emit(CatFactStateError(message: error.toString()));
+        // check internet
+        if (error.toString().contains("SocketException")) {
+          emit(CatFactStateError(message: "No Internet Connection"));
+          return;
+        }
+        emit(CatFactStateError(
+            message: error.toString().replaceAll("Exception:", "")));
       }
     });
   }

@@ -10,7 +10,13 @@ class DogsBloc extends Bloc<DogsEvent, DogsState> {
         final String data = await DogsController.getModel();
         emit(DogsStateSuccess(imageUrl: data));
       } catch (error) {
-        emit(DogsStateError(message: error.toString()));
+        // check internet
+        if (error.toString().contains("SocketException")) {
+          emit(DogsStateError(message: "No Internet Connection"));
+          return;
+        }
+        emit(DogsStateError(
+            message: error.toString().replaceAll("Exception:", "")));
       }
     });
   }
